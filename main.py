@@ -24,13 +24,13 @@ class MyClient(discord.Client):
             data = data[len(COMMAND_KIRBY):]
             response = openai.Completion.create(
                 engine="curie-instruct-beta",
-                prompt="I am Kirby god and will anwer faithfully to questions. My subject is asking me the following:\n{0}\n".format(data),
+                prompt="Kirby, god of all beings. I anwer faithfully to all questions from my subjects.\n\nQ: Who is god?{0}A: God is myself and myself is god.\n\nQ:{0}\nA:".format(data),
                 temperature=0.9,
                 max_tokens=60,
                 top_p=1.0,
                 frequency_penalty=0.3,
                 presence_penalty=0.3,
-                stop=["\n"]
+                stop=["Q:"]
             )
             print(response)
             for choice in response.choices:
@@ -46,7 +46,7 @@ class MyClient(discord.Client):
                 top_p=1.0,
                 frequency_penalty=0.3,
                 presence_penalty=0.3,
-                stop=["\n"]
+                stop=["\n\n"]
             )
             print(response)
             for choice in response.choices:
@@ -62,7 +62,7 @@ class MyClient(discord.Client):
                 top_p=1.0,
                 frequency_penalty=0.3,
                 presence_penalty=0.3,
-                stop=["\n"]
+                stop=["\n\n"]
             )
             print(response)
             for choice in response.choices:
@@ -78,7 +78,7 @@ class MyClient(discord.Client):
                 top_p=1.0,
                 frequency_penalty=0.3,
                 presence_penalty=0.3,
-                stop=["\n"]
+                stop=["\n\n"]
             )
             print(response)
             for choice in response.choices:
