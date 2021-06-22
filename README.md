@@ -11,7 +11,7 @@ Usage
 =============
 
 There are currently 4 commands:
-- "Kirby god: " => Answer as a Kirby god. 
+- "Kirby god: " => Answers as a Kirby god. 
 - "Curie: "
 - "Babbage: "
 - "Ada: "
