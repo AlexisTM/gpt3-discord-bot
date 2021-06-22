@@ -24,13 +24,13 @@ class MyClient(discord.Client):
             data = data[len(COMMAND_KIRBY):]
             response = openai.Completion.create(
                 engine="curie-instruct-beta",
-                prompt="I am Kirby god{0}".format(data),
+                prompt="I am Kirby god and will anwer faithfully to questions. My subject is asking me the following:\n{0}\n".format(data),
                 temperature=0.9,
                 max_tokens=60,
                 top_p=1.0,
                 frequency_penalty=0.3,
                 presence_penalty=0.3,
-                stop=[":"]
+                stop=["\n"]
             )
             print(response)
             for choice in response.choices:
@@ -40,13 +40,13 @@ class MyClient(discord.Client):
             data = data[len(COMMAND_CURIE):]
             response = openai.Completion.create(
                 engine="curie",
-                prompt="{0}".format(data),
+                prompt="{0}\n".format(data),
                 temperature=0.9,
                 max_tokens=60,
                 top_p=1.0,
                 frequency_penalty=0.3,
                 presence_penalty=0.3,
-                stop=[":"]
+                stop=["\n"]
             )
             print(response)
             for choice in response.choices:
@@ -56,13 +56,13 @@ class MyClient(discord.Client):
             data = data[len(COMMAND_ADA):]
             response = openai.Completion.create(
                 engine="babbage",
-                prompt="{0}".format(data),
+                prompt="{0}\n".format(data),
                 temperature=0.9,
                 max_tokens=60,
                 top_p=1.0,
                 frequency_penalty=0.3,
                 presence_penalty=0.3,
-                stop=[":"]
+                stop=["\n"]
             )
             print(response)
             for choice in response.choices:
@@ -72,13 +72,13 @@ class MyClient(discord.Client):
             data = data[len(COMMAND_BABBAGE):]
             response = openai.Completion.create(
                 engine="ada",
-                prompt="{0}".format(data),
+                prompt="{0}\n".format(data),
                 temperature=0.9,
                 max_tokens=60,
                 top_p=1.0,
                 frequency_penalty=0.3,
                 presence_penalty=0.3,
-                stop=[":"]
+                stop=["\n"]
             )
             print(response)
             for choice in response.choices:
