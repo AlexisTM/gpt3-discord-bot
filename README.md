@@ -11,10 +11,10 @@ Usage
 =============
 
 There are currently 4 commands:
-- "Kirby god: " => 
-- COMMAND_CURIE="Curie: "
-- COMMAND_BABBAGE="Babbage: "
-- COMMAND_ADA="Ada: "
+- "Kirby god: " => Answer as a Kirby god. 
+- "Curie: "
+- "Babbage: "
+- "Ada: "
 
 Installation
 ==========
