@@ -3,17 +3,19 @@ import os
 import discord
 import openai
 from collections import defaultdict
+import random
 
 openai.api_key = os.environ.get("OPENAI_KEY")
 DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
 
 COMMAND_KIRBY="Kirby god: "
-COMMAND_CURIE="Curie: "
-COMMAND_BABBAGE="Babbage: "
-COMMAND_ADA="Ada: "
+COMMAND_ENABLE="Kirby enable"
+COMMAND_DISABLE="Kirby disable"
 COMMAND_NEED_MORE="I NEED MORE"
 
 MEMORY_LIMIT = 5
+JUMP_IN_HISTORY = 10
+JUMP_IN_PROBABILITY_DEFAULT = 25
 
 class OpenAIPromptResponse:
     def __init__(self, prompt, openai_response_choice):
@@ -44,6 +46,7 @@ class OpenAIMemory:
 
 
 last_openai_request = defaultdict(OpenAIMemory)
+enabled_channels = dict()
 
 class MyClient(discord.Client):
     async def on_ready(self):
@@ -54,10 +57,10 @@ class MyClient(discord.Client):
             return
         
         data = message.content
-        response = 0
-        prompt = ""
-        
+
         if data.startswith(COMMAND_KIRBY):
+            response = 0
+            prompt = ""
             prompt = data[len(COMMAND_KIRBY):]
             openai_prompt = "{0}\nQ: {1}\nA:".format(last_openai_request[message.author].get(), prompt)
             print('Prompt: {0}'.format(openai_prompt))
@@ -71,52 +74,55 @@ class MyClient(discord.Client):
                 presence_penalty=0.3,
                 stop=["Q:", "A:"]
             )
-                
-        if data.startswith(COMMAND_CURIE):
-            prompt = data[len(COMMAND_CURIE):]
-            response = openai.Completion.create(
-                engine="curie",
-                prompt="{0}\n".format(prompt),
-                temperature=0.9,
-                max_tokens=60,
-                top_p=1.0,
-                frequency_penalty=0.3,
-                presence_penalty=0.3,
-                stop=["\n\n"]
-            )
-                
-        if data.startswith(COMMAND_ADA):
-            prompt = data[len(COMMAND_ADA):]
-            response = openai.Completion.create(
-                engine="babbage",
-                prompt="{0}\n".format(prompt),
-                temperature=0.9,
-                max_tokens=60,
-                top_p=1.0,
-                frequency_penalty=0.3,
-                presence_penalty=0.3,
-                stop=["\n\n"]
-            )
+            if response != 0:
+                for choice in response.choices:
+                    last_openai_request[message.author].update(prompt, choice.text)
+                    await message.channel.send('{0.text}'.format(choice))
+                    # "id": "cmpl-3DyYkNkjnyBSHFbSNgh03GFjI9EpC", 
+            print('Message from {0.author}: {0.content}'.format(message))
+        elif data.startswith(COMMAND_ENABLE):
+            enabled_channels[hash(message.channel)] = JUMP_IN_PROBABILITY_DEFAULT
+            print('Kirby enabled for channel {0.channel}'.format(message))
+            await message.channel.send("Kirby started lurking in this channel.")
+        elif data.startswith(COMMAND_DISABLE):
+            if hash(message.channel) in enabled_channels:
+                del enabled_channels[hash(message.channel)]
+                await message.channel.send("Kirby left this channel.")
+            else:
+                await message.channel.send("Kirby was not even here!")
+            print('Kirby disabled for channel {0.channel}'.format(message))
+        else: # Random responses
+            if hash(message.channel) not in enabled_channels: return 
+            if enabled_channels[hash(message.channel)] <= random.randint(0, 99): return
 
-        if data.startswith(COMMAND_BABBAGE):
-            prompt = data[len(COMMAND_BABBAGE):]
+            prompt = "This is a conversation between Kirby, god of all beings and his subjects.\n"
+            prompt = "\nKirby god: I am Kirby. What can I do for you?"
+
+            hisory = await message.channel.history(limit=10).flatten()
+            #.flatten()
+            for history_message in reversed(hisory):
+                prompt += "\n" + str(history_message.author.name) + ": " + str(history_message.content)
+                if history_message.author == client.user:
+                    pass
+            prompt += "\nKirby god: "
+            print(prompt)
+
             response = openai.Completion.create(
-                engine="ada",
-                prompt="{0}\n".format(prompt),
+                engine="curie-instruct-beta",
+                prompt=prompt,
                 temperature=0.9,
                 max_tokens=60,
                 top_p=1.0,
                 frequency_penalty=0.3,
                 presence_penalty=0.3,
-                stop=["\n\n"]
+                stop=[":", "Kirby god", "\n\n"]
             )
+            if response != 0:
+                for choice in response.choices:
+                    last_openai_request[message.author].update(prompt, choice.text)
+                    await message.channel.send('{0.text}'.format(choice))
+            print('Message from {0.author}: {0.content}'.format(message))
 
-        if response != 0:
-            for choice in response.choices:
-                last_openai_request[message.author].update(prompt, choice.text)
-                await message.channel.send('{0.text}'.format(choice))
-                # "id": "cmpl-3DyYkNkjnyBSHFbSNgh03GFjI9EpC", 
-        print('Message from {0.author}: {0.content}'.format(message))
 
 intents = discord.Intents.default()
 intents.typing = False
