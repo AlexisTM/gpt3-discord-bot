@@ -115,7 +115,7 @@ class MyClient(discord.Client):
                 top_p=1.0,
                 frequency_penalty=0.3,
                 presence_penalty=0.3,
-                stop=[":", "Kirby god", "\n\n"]
+                stop=[":", "Kirby god", "\n"]
             )
             if response != 0:
                 for choice in response.choices:
