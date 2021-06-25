@@ -95,16 +95,16 @@ class MyClient(discord.Client):
             if hash(message.channel) not in enabled_channels: return 
             if enabled_channels[hash(message.channel)] <= random.randint(0, 99): return
 
-            prompt = "This is a conversation between Kirby, god of all beings and his subjects.\n"
-            prompt = "\nKirby god: I am Kirby. What can I do for you?"
+            prompt = "This is a conversation between Kirby, god of all beings and his subjects.\n\n"
+            prompt = "\n\nKirby god: I am Kirby. What can I do for you?"
 
             hisory = await message.channel.history(limit=10).flatten()
             #.flatten()
             for history_message in reversed(hisory):
-                prompt += "\n" + str(history_message.author.name) + ": " + str(history_message.content)
+                prompt += "\n\n" + str(history_message.author.name) + ": " + str(history_message.content)
                 if history_message.author == client.user:
                     pass
-            prompt += "\nKirby god: "
+            prompt += "\n\nKirby god: "
             print(prompt)
 
             response = openai.Completion.create(
@@ -115,7 +115,7 @@ class MyClient(discord.Client):
                 top_p=1.0,
                 frequency_penalty=0.3,
                 presence_penalty=0.3,
-                stop=[":", "Kirby god", "\n"]
+                stop=[":", "Kirby god", "\n\n"]
             )
             if response != 0:
                 for choice in response.choices:
