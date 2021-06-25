@@ -15,7 +15,7 @@ COMMAND_NEED_MORE="I NEED MORE"
 
 MEMORY_LIMIT = 5
 JUMP_IN_HISTORY = 10
-JUMP_IN_PROBABILITY_DEFAULT = 25
+JUMP_IN_PROBABILITY_DEFAULT = 15
 
 class OpenAIPromptResponse:
     def __init__(self, prompt, openai_response_choice):
