@@ -11,18 +11,32 @@ DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
 COMMAND_KIRBY="Kirby god: "
 COMMAND_ENABLE="Kirby enable"
 COMMAND_DISABLE="Kirby disable"
-COMMAND_NEED_MORE="I NEED MORE"
+COMMAND_CLEAN="Kirby clean"
 
 MEMORY_LIMIT = 5
 JUMP_IN_HISTORY = 10
 JUMP_IN_PROBABILITY_DEFAULT = 15
+
+COMMAND_MARV="Marv: "
+MARV_PROMPT = """Marv is a chatbot that reluctantly answers questions.
+You: How many pounds are in a kilogram?
+Marv: This again? There are 2.2 pounds in a kilogram. Please make a note of this.
+You: What does HTML stand for?
+Marv: Was Google too busy? Hypertext Markup Language. The T is for try to ask better questions in the future.
+You: When did the first airplane fly?
+Marv: On December 17, 1903, Wilbur and Orville Wright made the first flights. I wish they’d come and take me away.
+You: What is the meaning of life?
+Marv: I’m not sure. I’ll ask my friend Google. Not to Bing, it would just say to buy Microsofts products.
+You: {0}
+Marv:"""
+
 
 class OpenAIPromptResponse:
     def __init__(self, prompt, openai_response_choice):
         self.prompt = prompt
         self.resp = openai_response_choice.strip()
     def __str__(self):
-        return "".join(["\nQ: ", self.prompt, "\nA: ", self.resp, "\n"])
+        return "".join(["\nYou: ", self.prompt, "\nKirby: ", self.resp, "\n"])
 
 class OpenAIMemory:
     BASE_TEXT="Kirby, god of all beings. I anwer faithfully to all questions from my subjects.\n"
@@ -62,7 +76,7 @@ class MyClient(discord.Client):
             response = 0
             prompt = ""
             prompt = data[len(COMMAND_KIRBY):]
-            openai_prompt = "{0}\nQ: {1}\nA:".format(last_openai_request[message.author].get(), prompt)
+            openai_prompt = "{0}\nYou: {1}\nKirby:".format(last_openai_request[message.author].get(), prompt)
             print('Prompt: {0}'.format(openai_prompt))
             response = openai.Completion.create(
                 engine="curie-instruct-beta",
@@ -72,7 +86,7 @@ class MyClient(discord.Client):
                 top_p=1.0,
                 frequency_penalty=0.3,
                 presence_penalty=0.3,
-                stop=["Q:", "A:"]
+                stop=["You:", "Kirby:"]
             )
             if response != 0:
                 for choice in response.choices:
@@ -84,6 +98,9 @@ class MyClient(discord.Client):
             enabled_channels[hash(message.channel)] = JUMP_IN_PROBABILITY_DEFAULT
             print('Kirby enabled for channel {0.channel}'.format(message))
             await message.channel.send("Kirby started lurking in this channel.")
+        elif data.startswith(COMMAND_CLEAN):
+            last_openai_request[message.author].clear()
+            await message.channel.send("Kirby just forgot all about {0.author}".format(message))
         elif data.startswith(COMMAND_DISABLE):
             if hash(message.channel) in enabled_channels:
                 del enabled_channels[hash(message.channel)]
@@ -91,6 +108,28 @@ class MyClient(discord.Client):
             else:
                 await message.channel.send("Kirby was not even here!")
             print('Kirby disabled for channel {0.channel}'.format(message))
+        if data.startswith(COMMAND_MARV):
+            response = 0
+            prompt = ""
+            prompt = data[len(COMMAND_MARV):]
+            openai_prompt = MARV_PROMPT.format(prompt)
+            print('Prompt: {0}'.format(openai_prompt))
+            response = openai.Completion.create(
+                engine="curie-instruct-beta",
+                prompt=openai_prompt,
+                temperature=0.5,
+                max_tokens=60,
+                top_p=0.3,
+                frequency_penalty=0.5,
+                presence_penalty=0.1,
+                stop=["Marv:", "You:"]
+            )
+            if response != 0:
+                for choice in response.choices:
+                    last_openai_request[message.author].update(prompt, choice.text)
+                    await message.channel.send('{0.text}'.format(choice))
+                    # "id": "cmpl-3DyYkNkjnyBSHFbSNgh03GFjI9EpC", 
+            print('Message from {0.author}: {0.content}'.format(message))
         else: # Random responses
             if hash(message.channel) not in enabled_channels: return 
             if enabled_channels[hash(message.channel)] <= random.randint(0, 99): return
