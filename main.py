@@ -115,15 +115,16 @@ class MyClient(discord.Client):
             prompt = data[len(COMMAND_SHAKESPEARE):]
             prompt += "\n\n"
             response = openai.Completion.create(
-                engine="curie-instruct-beta",
+                engine="davinci-instruct-beta",
                 prompt=prompt,
-                temperature=0.7,
-                max_tokens=1000,
+                temperature=0.9,
+                max_tokens=500,
                 top_p=0.3,
                 frequency_penalty=0.5,
                 presence_penalty=0.2,
-                stop=["\n\n"]
+                stop=["\n\n\n"]
             )
+            print(prompt, response)
             if response != 0:
                 for choice in response.choices:
                     last_openai_request[message.author].update(prompt, choice.text)
