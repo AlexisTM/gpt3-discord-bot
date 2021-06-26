@@ -7,14 +7,17 @@ Environment keys:
 - OPENAI_KEY
 - DISCORD_BOT_TOKEN
 
-Usage
+Commands
 =============
 
-There are currently 4 commands:
-- "Kirby god: " => Answers as a Kirby god. 
-- "Curie: "
-- "Babbage: "
-- "Ada: "
+- `Kirby are you there?`: Replies yes if the server runs
+- `Kirby enable`: Allow Kirby god to randomly jump into conversations (15% chance of reply)
+    - `Kirby disable`: Disable the Kirby mode of the channel 
+- `Kirby god: `: Answers as a Kirby god. 
+    - Remembers the 5 last prompts & answers
+    - Clean the memory with `Kirby clean`
+- `Marv: ` => Answers as a chatbot that reluctantly answers questions.
+
 
 Installation
 ==========
@@ -29,6 +32,9 @@ export OPENAI_KEY="someothertoken"
 
 python3 main.py
 ```
+
+Technical help on how to make a Discord bot:
+==================
 
 Create a bot application: https://discordpy.readthedocs.io/en/stable/discord.html
 
