@@ -18,6 +18,8 @@ MEMORY_LIMIT = 5
 JUMP_IN_HISTORY = 10
 JUMP_IN_PROBABILITY_DEFAULT = 15
 
+COMMAND_SHAKESPEARE="Shakespeare: "
+
 COMMAND_MARV="Marv: "
 MARV_PROMPT = """Marv is a chatbot that reluctantly answers questions.
 You: How many pounds are in a kilogram?
@@ -93,8 +95,6 @@ class MyClient(discord.Client):
                 for choice in response.choices:
                     last_openai_request[message.author].update(prompt, choice.text)
                     await message.channel.send('{0.text}'.format(choice))
-                    # "id": "cmpl-3DyYkNkjnyBSHFbSNgh03GFjI9EpC", 
-            print('Message from {0.author}: {0.content}'.format(message))
         elif data.startswith(COMMAND_ENABLE):
             enabled_channels[hash(message.channel)] = JUMP_IN_PROBABILITY_DEFAULT
             print('Kirby enabled for channel {0.channel}'.format(message))
@@ -110,7 +110,24 @@ class MyClient(discord.Client):
                 await message.channel.send("Kirby left this channel.")
             else:
                 await message.channel.send("Kirby was not even here!")
-            print('Kirby disabled for channel {0.channel}'.format(message))
+        if data.startswith(COMMAND_SHAKESPEARE):
+            response = 0
+            prompt = data[len(COMMAND_SHAKESPEARE):]
+            prompt += "\n\n"
+            response = openai.Completion.create(
+                engine="curie-instruct-beta",
+                prompt=prompt,
+                temperature=0.7,
+                max_tokens=1000,
+                top_p=0.3,
+                frequency_penalty=0.5,
+                presence_penalty=0.2,
+                stop=["\n\n"]
+            )
+            if response != 0:
+                for choice in response.choices:
+                    last_openai_request[message.author].update(prompt, choice.text)
+                    await message.channel.send('{0.text}'.format(choice))
         if data.startswith(COMMAND_MARV):
             response = 0
             prompt = ""
@@ -131,8 +148,6 @@ class MyClient(discord.Client):
                 for choice in response.choices:
                     last_openai_request[message.author].update(prompt, choice.text)
                     await message.channel.send('{0.text}'.format(choice))
-                    # "id": "cmpl-3DyYkNkjnyBSHFbSNgh03GFjI9EpC", 
-            print('Message from {0.author}: {0.content}'.format(message))
         else: # Random responses
             if hash(message.channel) not in enabled_channels: return 
             if enabled_channels[hash(message.channel)] <= random.randint(0, 99): return
@@ -163,7 +178,6 @@ class MyClient(discord.Client):
                 for choice in response.choices:
                     last_openai_request[message.author].update(prompt, choice.text)
                     await message.channel.send('{0.text}'.format(choice))
-            print('Message from {0.author}: {0.content}'.format(message))
 
 
 intents = discord.Intents.default()
