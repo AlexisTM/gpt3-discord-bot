@@ -12,6 +12,7 @@ COMMAND_KIRBY="Kirby god: "
 COMMAND_ENABLE="Kirby enable"
 COMMAND_DISABLE="Kirby disable"
 COMMAND_CLEAN="Kirby clean"
+COMMAND_PRESENCE="Kirby are you there?"
 
 MEMORY_LIMIT = 5
 JUMP_IN_HISTORY = 10
@@ -98,6 +99,8 @@ class MyClient(discord.Client):
             enabled_channels[hash(message.channel)] = JUMP_IN_PROBABILITY_DEFAULT
             print('Kirby enabled for channel {0.channel}'.format(message))
             await message.channel.send("Kirby started lurking in this channel.")
+        elif data.startswith(COMMAND_PRESENCE):
+            await message.channel.send("Yes.")
         elif data.startswith(COMMAND_CLEAN):
             last_openai_request[message.author].clear()
             await message.channel.send("Kirby just forgot all about {0.author}".format(message))
