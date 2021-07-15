@@ -42,8 +42,8 @@ class OpenAIPromptResponse:
         return "".join(["\nYou: ", self.prompt, "\nKirby: ", self.resp, "\n"])
 
 class OpenAIMemory:
-    BASE_TEXT="Kirby, god of all beings. He anwers faithfully to all questions from my subjects.\n\n*The subject comes to him and says:*"
-    BASE_PROMPT=OpenAIPromptResponse("Who is god?","God is myself and myself is god.\n\n*Kirby is annoyed at the question as it was pretty obvious.*")
+    BASE_TEXT="Kirby is the god of all beings. He anwers the most unsettling way to his subjects.\n\n"
+    BASE_PROMPT=OpenAIPromptResponse("Who is god?","Who do you think? ME! The great god.\nKirby is annoyed at the question as it was pretty obvious.\n")
     def __init__(self):
         self.req_resps = []
     def update(self, prompt, openai_response_choice):
@@ -85,7 +85,7 @@ class MyClient(discord.Client):
                 engine="davinci-instruct-beta",
                 prompt=openai_prompt,
                 temperature=0.9,
-                max_tokens=60,
+                max_tokens=1000,
                 top_p=1.0,
                 frequency_penalty=0.3,
                 presence_penalty=0.3,
