@@ -41,6 +41,7 @@ NOTES
 - If it continues, you can fix it by enforcing default prompts. I wanted to keep only the "personal" history thus remove the base prompt once one custom prompt exists. If you are giving two prompts asking for similar responses, you risk falling in a loop.
    - Fix 1: Keep the default prompts for until you can fill it with personal prompts
    - Fix 2: Always keep default prompts   
+- This is very light, I run this on a PiZero and it replies almost instantly (but it is only on 10 or so servers).
 
 Technical help on how to make a Discord bot:
 ==================
