@@ -1,7 +1,7 @@
 OpenAI Discord bot
 ==================
 
-This is an OpenAI discord bot.
+This is an OpenAI discord bot replying as Kirby.
 
 Environment keys:
 - OPENAI_KEY
@@ -26,12 +26,21 @@ Installation
 git clone https://github.com/AlexisTM/gpt3-discord-bot
 
 cd gpt3-discord-bot
+python3 -m pip install -r requirements.txt --user
 
 export DISCORD_BOTOKEN="sometoken" 
 export OPENAI_KEY="someothertoken"
 
 python3 main.py
 ```
+
+NOTES
+==========
+
+- If your Kirby is replying the same thing over and over, `Kirby clean` it.
+- If it continues, you can fix it by enforcing default prompts. I wanted to keep only the "personal" history thus remove the base prompt once one custom prompt exists. If you are giving two prompts asking for similar responses, you risk falling in a loop.
+   - Fix 1: Keep the default prompts for until you can fill it with personal prompts
+   - Fix 2: Always keep default prompts   
 
 Technical help on how to make a Discord bot:
 ==================
