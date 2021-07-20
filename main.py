@@ -54,7 +54,7 @@ class OpenAIMemory:
         self.req_resps = []
     def get(self):
         result = "".join([self.BASE_TEXT])
-        if len(self.req_resps) == 0:
+        if len(self.req_resps) <= 2:
             result += str(self.BASE_PROMPT)
         else:
             for val in self.req_resps:
