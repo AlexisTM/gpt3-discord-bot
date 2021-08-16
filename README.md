@@ -30,6 +30,7 @@ python3 -m pip install -r requirements.txt --user
 
 export DISCORD_BOTOKEN="sometoken" 
 export OPENAI_KEY="someothertoken"
+export AI21_API_KEY="yetanothertoken"
 
 python3 main.py
 ```

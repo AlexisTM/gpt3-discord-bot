@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 import os
 import discord
-import openai
+import ask_openai
+import ask_ai21
 from collections import defaultdict
 import random
 
-openai.api_key = os.environ.get("OPENAI_KEY")
+ask_god = ask_ai21.ask_prompt
+
 DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
 
 COMMAND_KIRBY="Kirby god: "
@@ -34,20 +36,20 @@ You: {0}
 Marv:"""
 
 
-class OpenAIPromptResponse:
-    def __init__(self, prompt, openai_response_choice):
+class AIPromptResponse:
+    def __init__(self, prompt, response):
         self.prompt = prompt
-        self.resp = openai_response_choice.strip()
+        self.resp = response.strip()
     def __str__(self):
         return "".join(["\nYou: ", self.prompt, "\nKirby: ", self.resp, "\n"])
 
-class OpenAIMemory:
+class AIMemory:
     BASE_TEXT="Kirby is the god of all beings. He anwers the most unsettling way to his subjects.\n\n"
-    BASE_PROMPT=OpenAIPromptResponse("Who is god?","Who do you think? ME! The great god.\nKirby is annoyed at the question as it was pretty obvious.\n")
+    BASE_PROMPT=AIPromptResponse("Who is god?","Who do you think? ME! The great god.\nKirby is annoyed at the question as it was pretty obvious.\n")
     def __init__(self):
         self.req_resps = []
-    def update(self, prompt, openai_response_choice):
-        self.req_resps.append(OpenAIPromptResponse(prompt, openai_response_choice))
+    def update(self, prompt, response):
+        self.req_resps.append(AIPromptResponse(prompt, response))
         if len(self.req_resps) > MEMORY_LIMIT:
             self.req_resps.pop(0) 
     def clear(self):
@@ -62,7 +64,7 @@ class OpenAIMemory:
         return result
 
 
-last_openai_request = defaultdict(OpenAIMemory)
+last_ai_request = defaultdict(AIMemory)
 enabled_channels = dict()
 
 class MyClient(discord.Client):
@@ -76,25 +78,15 @@ class MyClient(discord.Client):
         data = message.content
 
         if data.startswith(COMMAND_KIRBY):
-            response = 0
             prompt = ""
             prompt = data[len(COMMAND_KIRBY):]
-            openai_prompt = "{0}\nYou: {1}\nKirby:".format(last_openai_request[message.author].get(), prompt)
-            print('Prompt: {0}'.format(openai_prompt))
-            response = openai.Completion.create(
-                engine="davinci-instruct-beta",
-                prompt=openai_prompt,
-                temperature=0.9,
-                max_tokens=1000,
-                top_p=1.0,
-                frequency_penalty=0.3,
-                presence_penalty=0.3,
-                stop=["You:", "Kirby:"]
-            )
-            if response != 0:
-                for choice in response.choices:
-                    last_openai_request[message.author].update(prompt, choice.text)
-                    await message.channel.send('{0.text}'.format(choice))
+            ai_prompt = "{0}\nYou: {1}\nKirby:".format(last_ai_request[message.author].get(), prompt)
+            print('Prompt: {0}'.format(ai_prompt))
+            result = ask_god(ai_prompt)
+            if result != "":
+                last_ai_request[message.author].update(prompt, result)
+                await message.channel.send('{0}'.format(result))
+
         elif data.startswith(COMMAND_ENABLE):
             enabled_channels[hash(message.channel)] = JUMP_IN_PROBABILITY_DEFAULT
             print('Kirby enabled for channel {0.channel}'.format(message))
@@ -102,7 +94,7 @@ class MyClient(discord.Client):
         elif data.startswith(COMMAND_PRESENCE):
             await message.channel.send("Yes.")
         elif data.startswith(COMMAND_CLEAN):
-            last_openai_request[message.author].clear()
+            last_ai_request[message.author].clear()
             await message.channel.send("Kirby just forgot all about {0.author}".format(message))
         elif data.startswith(COMMAND_DISABLE):
             if hash(message.channel) in enabled_channels:
@@ -114,41 +106,20 @@ class MyClient(discord.Client):
             response = 0
             prompt = data[len(COMMAND_SHAKESPEARE):]
             prompt += "\n\n"
-            response = openai.Completion.create(
-                engine="davinci-instruct-beta",
-                prompt=prompt,
-                temperature=0.9,
-                max_tokens=500,
-                top_p=0.3,
-                frequency_penalty=0.5,
-                presence_penalty=0.2,
-                stop=["\n\n\n"]
-            )
-            print(prompt, response)
-            if response != 0:
-                for choice in response.choices:
-                    last_openai_request[message.author].update(prompt, choice.text)
-                    await message.channel.send('{0.text}'.format(choice))
+            result = ask_god(ai_prompt, stopSequences=["\n\n\n"])
+            if result != "":
+                await message.channel.send('{0}'.format(result))
+
         if data.startswith(COMMAND_MARV):
             response = 0
             prompt = ""
             prompt = data[len(COMMAND_MARV):]
-            openai_prompt = MARV_PROMPT.format(prompt)
-            print('Prompt: {0}'.format(openai_prompt))
-            response = openai.Completion.create(
-                engine="curie-instruct-beta",
-                prompt=openai_prompt,
-                temperature=0.5,
-                max_tokens=60,
-                top_p=0.3,
-                frequency_penalty=0.5,
-                presence_penalty=0.1,
-                stop=["Marv:", "You:"]
-            )
-            if response != 0:
-                for choice in response.choices:
-                    last_openai_request[message.author].update(prompt, choice.text)
-                    await message.channel.send('{0.text}'.format(choice))
+            ai_prompt = MARV_PROMPT.format(prompt)
+            print('Prompt: {0}'.format(ai_prompt))
+            result = ask_god(ai_prompt, stopSequences=["Marv:", "You:"])
+            if result != "":
+                await message.channel.send('{0}'.format(result))
+
         else: # Random responses
             if hash(message.channel) not in enabled_channels: return 
             if enabled_channels[hash(message.channel)] <= random.randint(0, 99): return
@@ -165,20 +136,10 @@ class MyClient(discord.Client):
             prompt += "\n\nKirby god: "
             print(prompt)
 
-            response = openai.Completion.create(
-                engine="curie-instruct-beta",
-                prompt=prompt,
-                temperature=0.9,
-                max_tokens=60,
-                top_p=1.0,
-                frequency_penalty=0.3,
-                presence_penalty=0.3,
-                stop=[":", "Kirby god", "\n\n"]
-            )
-            if response != 0:
-                for choice in response.choices:
-                    last_openai_request[message.author].update(prompt, choice.text)
-                    await message.channel.send('{0.text}'.format(choice))
+            result = ask_god(ai_prompt)
+            if result != "":
+                last_ai_request[message.author].update(prompt, result)
+                await message.channel.send('{0}'.format(result))
 
 
 intents = discord.Intents.default()
