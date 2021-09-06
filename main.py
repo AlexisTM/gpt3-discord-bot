@@ -76,15 +76,15 @@ class MyClient(discord.Client):
             return
         
         data = message.content
-
+        source = "".join([message.guild.name, "#", message.channel])
         if data.startswith(COMMAND_KIRBY):
             prompt = ""
             prompt = data[len(COMMAND_KIRBY):]
-            ai_prompt = "{0}\nYou: {1}\nKirby:".format(last_ai_request[message.author].get(), prompt)
+            ai_prompt = "{0}\nYou: {1}\nKirby:".format(last_ai_request[source].get(), prompt)
             print('Prompt: {0}'.format(ai_prompt))
             result = ask_god(ai_prompt)
             if result != "":
-                last_ai_request[message.author].update(prompt, result)
+                last_ai_request[source].update(prompt, result)
                 await message.channel.send('{0}'.format(result))
 
         elif data.startswith(COMMAND_ENABLE):
@@ -94,7 +94,7 @@ class MyClient(discord.Client):
         elif data.startswith(COMMAND_PRESENCE):
             await message.channel.send("Yes.")
         elif data.startswith(COMMAND_CLEAN):
-            last_ai_request[message.author].clear()
+            last_ai_request[source].clear()
             await message.channel.send("Kirby just forgot all about {0.author}".format(message))
         elif data.startswith(COMMAND_DISABLE):
             if hash(message.channel) in enabled_channels:
@@ -138,7 +138,7 @@ class MyClient(discord.Client):
 
             result = ask_god(ai_prompt)
             if result != "":
-                last_ai_request[message.author].update(prompt, result)
+                last_ai_request[source].update(prompt, result)
                 await message.channel.send('{0}'.format(result))
 
 
