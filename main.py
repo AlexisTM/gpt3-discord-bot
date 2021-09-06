@@ -76,7 +76,11 @@ class MyClient(discord.Client):
             return
         
         data = message.content
-        source = "".join([message.guild.name, "#", message.channel])
+        source = ""
+        if message.guild:
+            source = "".join([message.guild.name, "#", message.channel.name])
+        else:
+            source = "".join(["#", message.channel.name])
         if data.startswith(COMMAND_KIRBY):
             prompt = ""
             prompt = data[len(COMMAND_KIRBY):]
