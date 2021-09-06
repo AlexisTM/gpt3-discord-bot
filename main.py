@@ -78,7 +78,7 @@ class MyClient(discord.Client):
         data = message.content
         source = ""
         if type(message.channel) is discord.DMChannel:
-            source = "".join(["#", message.channel.recipient.user.name])
+            source = "".join(["#", message.channel.recipient.name])
         elif message.guild:
             source = "".join([message.guild.name, "#", message.channel.name])
         else:
