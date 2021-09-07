@@ -84,15 +84,7 @@ class MyClient(discord.Client):
         else:
             source = "".join(["#", message.channel.name])
 
-        if type(message.channel) is discord.DMChannel:
-            prompt = data
-            ai_prompt = "{0}\nYou: {1}\nKirby:".format(last_ai_request[source].get(), data)
-            print('Prompt: {0}'.format(ai_prompt))
-            result = ask_god(ai_prompt)
-            if result != "":
-                last_ai_request[source].update(prompt, result)
-                await message.channel.send('{0}'.format(result))
-        elif data.startswith(COMMAND_KIRBY):
+        if data.startswith(COMMAND_KIRBY):
             prompt = ""
             prompt = data[len(COMMAND_KIRBY):]
             ai_prompt = "{0}\nYou: {1}\nKirby:".format(last_ai_request[source].get(), prompt)
@@ -116,16 +108,14 @@ class MyClient(discord.Client):
                 await message.channel.send("Kirby left this channel.")
             else:
                 await message.channel.send("Kirby was not even here!")
-        if data.startswith(COMMAND_SHAKESPEARE):
-            response = 0
+        elif data.startswith(COMMAND_SHAKESPEARE):
             prompt = data[len(COMMAND_SHAKESPEARE):]
             prompt += "\n\n"
             result = ask_god(prompt, stopSequences=["\n\n\n"])
             if result != "":
                 await message.channel.send('{0}'.format(result))
 
-        if data.startswith(COMMAND_MARV):
-            response = 0
+        elif data.startswith(COMMAND_MARV):
             prompt = ""
             prompt = data[len(COMMAND_MARV):]
             ai_prompt = MARV_PROMPT.format(prompt)
@@ -134,6 +124,14 @@ class MyClient(discord.Client):
             if result != "":
                 await message.channel.send('{0}'.format(result))
 
+        elif type(message.channel) is discord.DMChannel:
+            prompt = data
+            ai_prompt = "{0}\nYou: {1}\nKirby:".format(last_ai_request[source].get(), data)
+            print('Prompt: {0}'.format(ai_prompt))
+            result = ask_god(ai_prompt)
+            if result != "":
+                last_ai_request[source].update(prompt, result)
+                await message.channel.send('{0}'.format(result))
         else: # Random responses
             if hash(message.channel) not in enabled_channels: return
             if enabled_channels[hash(message.channel)] <= random.randint(0, 99): return
