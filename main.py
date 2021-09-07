@@ -83,7 +83,16 @@ class MyClient(discord.Client):
             source = "".join([message.guild.name, "#", message.channel.name])
         else:
             source = "".join(["#", message.channel.name])
-        if data.startswith(COMMAND_KIRBY):
+
+        if type(message.channel) is discord.DMChannel:
+            prompt = data
+            ai_prompt = "{0}\nYou: {1}\nKirby:".format(last_ai_request[source].get(), data)
+            print('Prompt: {0}'.format(ai_prompt))
+            result = ask_god(ai_prompt)
+            if result != "":
+                last_ai_request[source].update(prompt, result)
+                await message.channel.send('{0}'.format(result))
+        elif data.startswith(COMMAND_KIRBY):
             prompt = ""
             prompt = data[len(COMMAND_KIRBY):]
             ai_prompt = "{0}\nYou: {1}\nKirby:".format(last_ai_request[source].get(), prompt)
@@ -92,7 +101,6 @@ class MyClient(discord.Client):
             if result != "":
                 last_ai_request[source].update(prompt, result)
                 await message.channel.send('{0}'.format(result))
-
         elif data.startswith(COMMAND_ENABLE):
             enabled_channels[hash(message.channel)] = JUMP_IN_PROBABILITY_DEFAULT
             print('Kirby enabled for channel {0.channel}'.format(message))
@@ -112,7 +120,7 @@ class MyClient(discord.Client):
             response = 0
             prompt = data[len(COMMAND_SHAKESPEARE):]
             prompt += "\n\n"
-            result = ask_god(ai_prompt, stopSequences=["\n\n\n"])
+            result = ask_god(prompt, stopSequences=["\n\n\n"])
             if result != "":
                 await message.channel.send('{0}'.format(result))
 
@@ -142,7 +150,7 @@ class MyClient(discord.Client):
             prompt += "\n\nKirby god: "
             print(prompt)
 
-            result = ask_god(ai_prompt)
+            result = ask_god(prompt)
             if result != "":
                 last_ai_request[source].update(prompt, result)
                 await message.channel.send('{0}'.format(result))
