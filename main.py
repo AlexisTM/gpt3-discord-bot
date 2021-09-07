@@ -51,7 +51,7 @@ class AIMemory:
     def update(self, prompt, response):
         self.req_resps.append(AIPromptResponse(prompt, response))
         if len(self.req_resps) > MEMORY_LIMIT:
-            self.req_resps.pop(0) 
+            self.req_resps.pop(0)
     def clear(self):
         self.req_resps = []
     def get(self):
@@ -74,7 +74,7 @@ class MyClient(discord.Client):
     async def on_message(self, message):
         if message.author == self.user:
             return
-        
+
         data = message.content
         source = ""
         if type(message.channel) is discord.DMChannel:
@@ -101,7 +101,7 @@ class MyClient(discord.Client):
             await message.channel.send("Yes.")
         elif data.startswith(COMMAND_CLEAN):
             last_ai_request[source].clear()
-            await message.channel.send("Kirby just forgot all about {0.author}".format(message))
+            await message.channel.send("Kirby just forgot all about {0}".format(source))
         elif data.startswith(COMMAND_DISABLE):
             if hash(message.channel) in enabled_channels:
                 del enabled_channels[hash(message.channel)]
@@ -127,7 +127,7 @@ class MyClient(discord.Client):
                 await message.channel.send('{0}'.format(result))
 
         else: # Random responses
-            if hash(message.channel) not in enabled_channels: return 
+            if hash(message.channel) not in enabled_channels: return
             if enabled_channels[hash(message.channel)] <= random.randint(0, 99): return
 
             prompt = "This is a conversation between Kirby, god of all beings and his subjects.\n\n"
