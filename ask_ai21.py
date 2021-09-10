@@ -2,6 +2,7 @@ import requests
 import os
 
 API_URL = os.getenv("API_URL", "https://api.ai21.com/studio/v1/{}/complete")
+USAGE_URL = os.getenv("USAGE_URL", "https://api.ai21.com/identity/usage")
 # Set the ENV var with your AI21 Studio API key:
 API_KEY = os.getenv("AI21_API_KEY")
 # options are j1-jumbo and j1-large
@@ -25,6 +26,11 @@ def ask_prompt(prompt, model=MODEL, num_results=1, max_tokens=250, stopSequences
                             "topKReturn": topKReturn
                         })
     assert res.status_code == 200, res.json()
-    
+
     return res.json()['completions'][0]['data']['text']
 
+def get_usage():
+    res = requests.get(USAGE_URL,
+                        headers={"api-key": f"{API_KEY}"})
+    assert res.status_code == 200, res.json()
+    return res.json()
