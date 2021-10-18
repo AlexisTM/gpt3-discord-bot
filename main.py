@@ -7,6 +7,7 @@ from collections import defaultdict
 import random
 
 ask_god = ask_ai21.ask_prompt
+# ask_god = ask_openai.ask_prompt
 
 DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
 

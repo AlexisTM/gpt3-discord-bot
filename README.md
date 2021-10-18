@@ -5,6 +5,7 @@ This is an OpenAI discord bot replying as Kirby.
 
 Environment keys:
 - OPENAI_KEY
+- AI21_API_KEY
 - DISCORD_BOT_TOKEN
 
 Commands
@@ -16,8 +17,7 @@ Commands
 - `Kirby god: `: Answers as a Kirby god. 
     - Remembers the 5 last prompts & answers
     - Clean the memory with `Kirby clean`
-- `Marv: ` => Answers as a chatbot that reluctantly answers questions.
-
+- `Marv: ` => Answers as a chatbot that reluctantly answers questions. Not maintained ;)
 
 Installation
 ==========
@@ -35,14 +35,14 @@ export AI21_API_KEY="yetanothertoken"
 python3 main.py
 ```
 
-NOTES
-==========
+Notes: 
+- You can directly speak to the bot for a direct chat to Kirby
+- The 5 message memory is over the same channel. I will eventually add the user name in the memory for more coherence.
+- AI21 is free with enough fun for a day, but is much less smart than OpenAI's version in my biased opinion.
 
-- If your Kirby is replying the same thing over and over, `Kirby clean` it.
-- If it continues, you can fix it by enforcing default prompts. I wanted to keep only the "personal" history thus remove the base prompt once one custom prompt exists. If you are giving two prompts asking for similar responses, you risk falling in a loop.
-   - Fix 1: Keep the default prompts for until you can fill it with personal prompts
-   - Fix 2: Always keep default prompts   
-- This is very light, I run this on a PiZero and it replies almost instantly (but it is only on 10 or so servers).
+
+![Wow, Kirby is so funny](doc/kirby.png)
+
 
 Technical help on how to make a Discord bot:
 ==================
