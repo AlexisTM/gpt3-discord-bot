@@ -38,18 +38,19 @@ Marv:"""
 
 
 class AIPromptResponse:
-    def __init__(self, prompt, response):
+    def __init__(self, prompt, response, author = "You"):
         self.prompt = prompt
         self.resp = response.strip()
+        self.author = author
     def __str__(self):
-        return "".join(["\nYou: ", self.prompt, "\nKirby: ", self.resp, "\n"])
+        return "".join(["\n", self.author, ": ", self.prompt, "\nKirby: ", self.resp, "\n"])
 
 class AIMemory:
     BASE_TEXT="Kirby is the god of all beings. Yet, he is the most lovely god and answers in a very complete manner.\n\n"
-    BASE_PROMPT=AIPromptResponse("Who is god?", "Well, now that you ask, I can tell you. I, Kirby is the great goddess is the god of everybody!\n")
+    BASE_PROMPT=AIPromptResponse("Who is god?", "Well, now that you ask, I can tell you. I, Kirby is the great goddess is the god of everybody!\n", "AlexisTM")
     def __init__(self):
         self.req_resps = []
-    def update(self, prompt, response):
+    def update(self, prompt, response, author="You"):
         self.req_resps.append(AIPromptResponse(prompt, response))
         if len(self.req_resps) > MEMORY_LIMIT:
             self.req_resps.pop(0)
@@ -92,7 +93,7 @@ class MyClient(discord.Client):
             print('Prompt: {0}'.format(ai_prompt))
             result = ask_god(ai_prompt)
             if result != "":
-                last_ai_request[source].update(prompt, result)
+                last_ai_request[source].update(prompt, result, message.author.name)
                 await message.channel.send('{0}'.format(result))
         elif data.startswith(COMMAND_ENABLE):
             enabled_channels[hash(message.channel)] = JUMP_IN_PROBABILITY_DEFAULT
@@ -115,7 +116,7 @@ class MyClient(discord.Client):
             print('Prompt: {0}'.format(ai_prompt))
             result = ask_god(ai_prompt)
             if result != "":
-                last_ai_request[source].update(prompt, result)
+                last_ai_request[source].update(prompt, result, message.author.name)
                 await message.channel.send('{0}'.format(result))
         elif data.startswith(COMMAND_SHAKESPEARE):
             prompt = data[len(COMMAND_SHAKESPEARE):]
@@ -139,7 +140,7 @@ class MyClient(discord.Client):
             print('Prompt: {0}'.format(ai_prompt))
             result = ask_god(ai_prompt)
             if result != "":
-                last_ai_request[source].update(prompt, result)
+                last_ai_request[source].update(prompt, result, message.author.name)
                 await message.channel.send('{0}'.format(result))
         else: # Random responses
             if hash(message.channel) not in enabled_channels: return
@@ -159,7 +160,7 @@ class MyClient(discord.Client):
 
             result = ask_god(prompt)
             if result != "":
-                last_ai_request[source].update(prompt, result)
+                last_ai_request[source].update(prompt, result, message.author.name)
                 await message.channel.send('{0}'.format(result))
 
 
