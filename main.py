@@ -110,7 +110,7 @@ class MyClient(discord.Client):
                 await message.channel.send("Kirby left this channel.")
             else:
                 await message.channel.send("Kirby was not even here!")
-        elif "Kirby" in data or "kirby" in data:
+        elif "kirby" in data.lower():
             prompt = data
             ai_prompt = "{0}\nYou: {1}\nKirby:".format(last_ai_request[source].get(), prompt)
             print('Prompt: {0}'.format(ai_prompt))
