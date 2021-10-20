@@ -8,7 +8,7 @@ API_KEY = os.getenv("AI21_API_KEY")
 # options are j1-jumbo and j1-large
 MODEL = "j1-jumbo"
 
-def ask_prompt(prompt, model=MODEL, num_results=1, max_tokens=250, stopSequences=["You:", "Kirby:"],
+def ask_prompt(prompt, model=MODEL, num_results=1, max_tokens=250, stopSequences=["You:", "AlexisTM:", "Kirby:", "\n\n\n"],
                   temperature=0.8, topP=1.0, topKReturn=2):
     """
     Helper function to send request to AI21 Studio
