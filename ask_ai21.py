@@ -16,7 +16,7 @@ def ask_prompt(prompt, model=None, num_results=1, max_tokens=250, stopSequences=
     :return: the JSON response from the API
     """
     if model is None:
-        model = MODEL[random.randint(0, len(MODEL))]
+        model = MODEL[random.randint(0, len(MODEL) - 1)]
     res = requests.post(API_URL.format(model),
                         headers={"Authorization": f"Bearer {API_KEY}"},
                         json={
