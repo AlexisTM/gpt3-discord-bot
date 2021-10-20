@@ -8,6 +8,8 @@ Environment keys:
 - AI21_API_KEY
 - DISCORD_BOT_TOKEN
 
+Come and test on Discord!: https://discord.gg/Y8XPcj2Q
+
 Commands
 =============
 
