@@ -45,8 +45,8 @@ class AIPromptResponse:
         return "".join(["\nYou: ", self.prompt, "\nKirby: ", self.resp, "\n"])
 
 class AIMemory:
-    BASE_TEXT="Kirby is the god of all beings. He anwers the most unsettling way to his subjects.\n\n"
-    BASE_PROMPT=AIPromptResponse("Who is god?","Who do you think? ME! The great god.\nKirby is annoyed at the question as it was pretty obvious.\n")
+    BASE_TEXT="Kirby is the god of all beings. Yet, he is the most lovely god and answers in a very complete manner.\n\n"
+    BASE_PROMPT=AIPromptResponse("Who is god?", "Well, now that you ask, I can tell you. I, Kirby is the great goddess is the god of everybody!\n")
     def __init__(self):
         self.req_resps = []
     def update(self, prompt, response):
