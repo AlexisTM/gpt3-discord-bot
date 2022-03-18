@@ -120,10 +120,9 @@ class MyClient(discord.Client):
                 await message.channel.send('{0}'.format(result))
         elif data.startswith(COMMAND_SHAKESPEARE):
             prompt = data[len(COMMAND_SHAKESPEARE):]
-            prompt += "\n\n"
             result = ask_god(prompt, stopSequences=["\n\n\n"])
             if result != "":
-                await message.channel.send('{0}'.format(result))
+                await message.channel.send('{0}{1}'.format(prompt, result))
 
         elif data.startswith(COMMAND_MARV):
             prompt = ""
