@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import discord
-import ask_openai
+# import ask_openai
 import ask_ai21
 from collections import defaultdict
 import random

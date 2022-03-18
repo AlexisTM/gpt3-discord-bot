@@ -7,7 +7,7 @@ USAGE_URL = os.getenv("USAGE_URL", "https://api.ai21.com/identity/usage")
 # Set the ENV var with your AI21 Studio API key:
 API_KEY = os.getenv("AI21_API_KEY")
 # options are j1-jumbo and j1-large
-MODEL = ["j1-jumbo", "j1-large", "j1-large", "j1-large"]
+MODEL = ["j1-jumbo", "j1-jumbo", "j1-jumbo", "j1-jumbo"]
 
 def ask_prompt(prompt, model=None, num_results=1, max_tokens=250, stopSequences=["You:", "AlexisTM:", "Kirby:", "\n\n\n"],
                   temperature=0.8, topP=1.0, topKReturn=2):
