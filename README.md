@@ -1,6 +1,8 @@
 OpenAI Discord bot
 ==================
 
+NOTE: More features are available in the Rust version: https://github.com/AlexisTM/discord-god-rust
+
 This is an OpenAI discord bot replying as Kirby.
 
 Environment keys:
